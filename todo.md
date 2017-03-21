@@ -5,3 +5,4 @@
 - [ ] Task notes (show task function) 
 - [ ] list: force formatting option
 - [ ] Shorten too long task titles
+- [ ] Add google calender integration (push? pull?)
