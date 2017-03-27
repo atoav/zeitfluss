@@ -124,8 +124,8 @@ def formattask(task, absolute=False):
             weekpluralize="s" if weeks>1 else ""
             tstring = str(int(weeks))+" Week"+weekpluralize
         # For times bigger than 3 days
-        elif delta.total_seconds()/60./60.//24 >= 3:
-            days = delta.total_seconds()//86400.
+        elif delta.total_seconds()/60./60./24. >= 3:
+            days = delta.total_seconds()/86400.
             daypluralize="s" if days>1 else ""
             tstring = str(int(days))+" Day"+daypluralize
         else:
@@ -144,13 +144,18 @@ def formattask(task, absolute=False):
                 tstring = str(int(weeks))+" Week"+weekpluralize
             elif delta.total_seconds() > 60*60*24*12:
                 days = delta.total_seconds()//86400.
-                tstring = str(int(days))+" Day"
+                dayspluralize = ""
+                daypluralize="s" if days>1 else ""
+                tstring = str(int(days))+" Day"+dayspluralize
             else:
                 tstring = "tomorrow"
     elif timeformat == "days":
         days = delta.total_seconds()/60./60./24.
-        if delta.total_seconds() > 60*60*24*12:
-            tstring = str(int(days))+" Day"
+        if delta.total_seconds() > 60*60*12:
+            days = delta.total_seconds()/86400.
+            dayspluralize = ""
+            daypluralize="s" if days>1 else ""
+            tstring = str(int(days))+" Day"+dayspluralize
         else:
             tstring = "tomorrow"
     elif timeformat == "hours":
