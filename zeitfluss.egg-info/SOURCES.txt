@@ -1,3 +1,4 @@
+setup.py
 zeitfluss.py
 zeitfluss.egg-info/PKG-INFO
 zeitfluss.egg-info/SOURCES.txt

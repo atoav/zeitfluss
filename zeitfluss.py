@@ -80,8 +80,8 @@ def updatetasks():
     open(taskpath, 'w').close()
     # Write all other lines
     for i, taskline in enumerate(tasks):
-        # Check if delta is positive
-        if not (taskline[2]-datetime.now()).total_seconds() <= 0:
+        # Check if delta is positive (a week = 604800 seconds)
+        if not (taskline[2]-datetime.now()).total_seconds() <= 604800:
             writetask(taskline[1], str(taskline[2]), taskline[3])
 
 
