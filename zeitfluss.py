@@ -5,8 +5,8 @@ import click
 import parsedatetime
 from datetime import *
 import ConfigParser
-import os
-import io 
+import os, re
+import io
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -257,22 +257,51 @@ def list(absolute):
 
 
 
+def parsenumbers(string):
+    """
+    Take lists like '0, 1, 15-20' and return 
+    [0, 1, 15, 16, 17, 18, 19, 20]
+    """
+    # Find ranges like 0-15 or 30-10
+    ranges = re.findall("\d+\s*\-\s*\d+", str(string))
+    # Remove already found ranges from string
+    string = re.sub("\d+\s*\-\s*\d+", "", str(string))
+    # In the rest search for normal numbers
+    singlenumbers = re.findall("(\d+)", str(string))
+    # Convert all to int
+    singlenumbers = [int(x) for x in singlenumbers]
+    # Iterate through the ranges and append the numbers to rangenumbers
+    rangenumbers = []
+    for r in ranges:
+        values = [int(x) for x in r.replace(" ", "").split("-")]
+        for value in range(min(values),max(values)):
+            rangenumbers.append(value)
+    # Join single numbers and ranges and sort them
+    allnumbers = rangenumbers + singlenumbers
+    allnumbers.sort()
+    return allnumbers
+
+
+
 @cli.command()
-@click.argument('tasknumber', default=0)
+@click.argument('string', default="0")
 @click.confirmation_option(help='Are you sure you want to delete the task?')
-def delete(tasknumber):
+def delete(string):
     """Delete a task. Example: zeitfluss delete 0"""
     tasks = readtasks()
-    if tasknumber < 0 or tasknumber >= len(tasks):
-        click.echo(click.style("ERROR: Task ["+str(tasknumber)+"] not found in list",fg='red'))
-        exit(0)
-    tasknumber, task, date, timeformat = tasks[tasknumber]
-    message = "Deleted → "+formattask(tasks[tasknumber]).replace("\t", " ")
-    click.secho(message, fg='red')
-    tasks = readtasks()
-    # Open and delete Taskfile 
-    open(taskpath, 'w').close()
-    # Write all other lines
-    for i, taskline in enumerate(tasks):
-        if not i==tasknumber:
-            writetask(taskline[1], str(taskline[2]), taskline[3])
+
+    tasknumbers = parsenumbers(string)
+    for tasknumber in tasknumbers:
+        if tasknumber < 0 or tasknumber >= len(tasks):
+            click.echo(click.style("ERROR: Task ["+str(tasknumber)+"] not found in list",fg='red'))
+            exit(0)
+        tasknumber, task, date, timeformat = tasks[tasknumber]
+        message = "Deleted → "+formattask(tasks[tasknumber]).replace("\t", " ")
+        click.secho(message, fg='red')
+        tasks = readtasks()
+        # Open and delete Taskfile 
+        open(taskpath, 'w').close()
+        # Write all other lines
+        for i, taskline in enumerate(tasks):
+            if not i==tasknumber:
+                writetask(taskline[1], str(taskline[2]), taskline[3])
