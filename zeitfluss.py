@@ -98,55 +98,55 @@ def formattask(task, absolute=False):
             days = delta.total_seconds()/60./60./24.
             years = days//365.
             yearpluralize="s" if years>1 else ""
-            tstring = str(int(years))+" Year"+yearpluralize
+            tstring = str(abs(int(years)))+" Year"+yearpluralize
             leftdays = days - years*365
             if leftdays >= 30:
                 months = leftdays//30.
                 monthpluralize="s" if months>1 else ""
-                tstring += " and "+str(int(months))+" Month"+monthpluralize
+                tstring += " and "+str(abs(int(months)))+" Month"+monthpluralize
             elif leftdays >= 7:
                 weeks = leftdays//7.
                 weekpluralize="s" if weeks>1 else ""
-                tstring += " and " +str(int(weeks))+" Week"+weekpluralize
+                tstring += " and " +str(abs(int(weeks)))+" Week"+weekpluralize
             elif leftdays != 0:
                 daypluralize="s" if leftdays>1 else ""
-                tstring += " and " +str(int(leftdays))+ " Day"+daypluralize
+                tstring += " and " +str(abs(int(leftdays)))+ " Day"+daypluralize
         # For times bigger than 2 Months
         elif delta.total_seconds()/60./60./24. >=60:
             days = delta.total_seconds()/60./60./24.
             months = days//30.
             monthpluralize="s" if months>1 else ""
-            tstring = str(int(months))+ " Month"+monthpluralize
+            tstring = str(abs(int(months)))+ " Month"+monthpluralize
         # For times equal or bigger than 2 weeks
         elif delta.total_seconds()/60./60.//24 >= 14:
             days = delta.total_seconds()/86400.
             weeks = days//7.
             weekpluralize="s" if weeks>1 else ""
-            tstring = str(int(weeks))+" Week"+weekpluralize
+            tstring = str(abs(int(weeks)))+" Week"+weekpluralize
         # For times bigger than 3 days
         elif delta.total_seconds()/60./60./24. >= 3:
             days = delta.total_seconds()/86400.
             daypluralize="s" if days>1 else ""
-            tstring = str(int(days))+" Day"+daypluralize
+            tstring = str(abs(int(days)))+" Day"+daypluralize
         else:
             hours = delta.total_seconds()/60.//60.
             hourpluralize="s" if hours>1 else ""
-            tstring = str(int(hours))+ " Hour"+hourpluralize
+            tstring = str(abs(int(hours)))+ " Hour"+hourpluralize
     elif timeformat == "months":
         months = delta.total_seconds()/60./60./24.//30
         monthpluralize="s" if months>1 else ""
         if months >= 1:
-            tstring = str(int(months))+" Month"+monthpluralize
+            tstring = str(abs(int(months)))+" Month"+monthpluralize
         else:
             if delta.total_seconds() > 60*60*24*7:
                 weeks = delta.total_seconds()/60./60./24./7.
                 weekpluralize="s" if weeks>1 else ""
-                tstring = str(int(weeks))+" Week"+weekpluralize
+                tstring = str(abs(int(weeks)))+" Week"+weekpluralize
             elif delta.total_seconds() > 60*60*24*12:
                 days = delta.total_seconds()//86400.
                 dayspluralize = ""
                 daypluralize="s" if days>1 else ""
-                tstring = str(int(days))+" Day"+dayspluralize
+                tstring = str(abs(int(days)))+" Day"+dayspluralize
             else:
                 tstring = "tomorrow"
     elif timeformat == "days":
@@ -155,26 +155,29 @@ def formattask(task, absolute=False):
             days = delta.total_seconds()/86400.
             dayspluralize = ""
             daypluralize="s" if days>1 else ""
-            tstring = str(int(days))+" Day"+dayspluralize
+            tstring = str(abs(int(days)))+" Day"+dayspluralize
         else:
             tstring = "tomorrow"
     elif timeformat == "hours":
         hours = delta.total_seconds()/60./60.
         if hours >= 1:
             hourpluralize="s" if hours>1 else ""
-            tstring = str(int(hours))+ " Hour"+hourpluralize
+            tstring = str(abs(int(hours)))+ " Hour"+hourpluralize
         else:
             minutes = delta.total_seconds()/60.//60
             minutepluralize="s" if minutes>1 else ""
-            tstring = str(int(minutes))+" Minute"+minutepluralize
+            tstring = str(abs(int(minutes)))+" Minute"+minutepluralize
 
     elif timeformat == "minutes":
         minutes = delta.total_seconds()/60.//60
         minutepluralize="s" if minutes>1 else ""
-        tstring = str(int(minutes))+" Minute"+minutepluralize
+        tstring = str(abs(int(minutes)))+" Minute"+minutepluralize
     tasknumber = "["+str(tasknumber)+"]"
     if not absolute:
-        tstring = tstring+" remaining"
+        if delta.total_seconds() < 0:
+            tstring = tstring+" overdue"
+        else:
+            tstring = tstring+" remaining"
     return "{:<5}{:<50}{:<25}".format(tasknumber, task, tstring)
 
 def checkdate(tasknumber):
