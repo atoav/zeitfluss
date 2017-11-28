@@ -81,7 +81,7 @@ def updatetasks():
     # Write all other lines
     for i, taskline in enumerate(tasks):
         # Check if delta is positive (a week = 604800 seconds)
-        if not (taskline[2]-datetime.now()).total_seconds() <= 604800:
+        if not (taskline[2]-datetime.now()).total_seconds() <= -604800:
             writetask(taskline[1], str(taskline[2]), taskline[3])
 
 
@@ -197,6 +197,17 @@ def checkdate(tasknumber):
     else:
         return False
 
+def checkoverdue(tasknumber):
+    """Check if a date passed the threshold"""
+    tasks = readtasks()
+    tasknumber, taskname, taskdate, timeformat = tasks[tasknumber]
+    delta = taskdate - datetime.now()
+    if delta.total_seconds() < 0:
+        return True
+    else:
+        return False
+
+
 @click.group()
 def cli():
         """zeitfluss is a countdown timer. You may add tasks with due dates to it and it can list those tasks with the remaining time available to finish each task. Good to keep track of deadlines. The tasks file is a simple text file located at ~/.zeitfluss/tasks.txt"""
@@ -230,7 +241,9 @@ def list(absolute):
         click.secho(header, fg='green')
         for i, tasklist in enumerate(tasks):
             message = formattask(tasklist, absolute)
-            if checkdate(i):
+            if checkoverdue(i):
+                click.secho(message, fg="white", bg="red")
+            elif checkdate(i):
                 click.secho(message, fg="white", bg="green")
             else:
                 click.secho(message, fg='green')
