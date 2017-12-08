@@ -32,12 +32,12 @@ if not os.path.exists(taskpath):
 
 config.read(configpath)
 
-cal = parsedatetime.Calendar()
+# cal = parsedatetime.Calendar()
 
-def strtodate(string):
-    """Parse humanreadable text and return a datetime"""
-    time_struct, parse_status = cal.parse(string)
-    return datetime(*time_struct[:6])
+# def strtodate(string):
+#     """Parse humanreadable text and return a datetime"""
+#     time_struct, parse_status = cal.parse(string)
+#     return datetime(*time_struct[:6])
 
 def sorttasks():
     """Sort the tasks by due time (freshest first)"""
@@ -257,29 +257,29 @@ def list(absolute):
 
 
 
-def parsenumbers(string):
-    """
-    Take lists like '0, 1, 15-20' and return 
-    [0, 1, 15, 16, 17, 18, 19, 20]
-    """
-    # Find ranges like 0-15 or 30-10
-    ranges = re.findall("\d+\s*\-\s*\d+", str(string))
-    # Remove already found ranges from string
-    string = re.sub("\d+\s*\-\s*\d+", "", str(string))
-    # In the rest search for normal numbers
-    singlenumbers = re.findall("(\d+)", str(string))
-    # Convert all to int
-    singlenumbers = [int(x) for x in singlenumbers]
-    # Iterate through the ranges and append the numbers to rangenumbers
-    rangenumbers = []
-    for r in ranges:
-        values = [int(x) for x in r.replace(" ", "").split("-")]
-        for value in range(min(values),max(values)):
-            rangenumbers.append(value)
-    # Join single numbers and ranges and sort them
-    allnumbers = rangenumbers + singlenumbers
-    allnumbers.sort()
-    return allnumbers
+# def parsenumbers(string):
+#     """
+#     Take lists like '0, 1, 15-20' and return 
+#     [0, 1, 15, 16, 17, 18, 19, 20]
+#     """
+#     # Find ranges like 0-15 or 30-10
+#     ranges = re.findall("\d+\s*\-\s*\d+", str(string))
+#     # Remove already found ranges from string
+#     string = re.sub("\d+\s*\-\s*\d+", "", str(string))
+#     # In the rest search for normal numbers
+#     singlenumbers = re.findall("(\d+)", str(string))
+#     # Convert all to int
+#     singlenumbers = [int(x) for x in singlenumbers]
+#     # Iterate through the ranges and append the numbers to rangenumbers
+#     rangenumbers = []
+#     for r in ranges:
+#         values = [int(x) for x in r.replace(" ", "").split("-")]
+#         for value in range(min(values),max(values)):
+#             rangenumbers.append(value)
+#     # Join single numbers and ranges and sort them
+#     allnumbers = rangenumbers + singlenumbers
+#     allnumbers.sort()
+#     return allnumbers
 
 
 
