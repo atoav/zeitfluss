@@ -285,14 +285,12 @@ def parsenumbers(string):
 
 @cli.command()
 @click.argument('string', default="0")
-@click.confirmation_option(help='Are you sure you want to delete the task?')
 def delete(string):
     """Delete a task. Example: zeitfluss delete 0"""
     tasks = readtasks()
-
     tasknumbers = parsenumbers(string)
     for tasknumber in tasknumbers:
-        if tasknumber < 0 or tasknumber >= len(tasks):
+        if (tasknumber < 0) or (tasknumber >= len(tasks)):
             click.echo(click.style("ERROR: Task ["+str(tasknumber)+"] not found in list",fg='red'))
             exit(0)
         tasknumber, task, date, timeformat = tasks[tasknumber]
@@ -300,8 +298,13 @@ def delete(string):
         click.secho(message, fg='red')
         tasks = readtasks()
         # Open and delete Taskfile 
-        open(taskpath, 'w').close()
+        # open(taskpath, 'w').close()
         # Write all other lines
-        for i, taskline in enumerate(tasks):
-            if not i==tasknumber:
-                writetask(taskline[1], str(taskline[2]), taskline[3])
+        with open(taskpath, 'r+') as f:
+            output = []
+            lines = f.readlines()
+            for i, line in enumerate(lines):
+                 if not i == tasknumber:
+                    output.append(line)
+            f.truncate(0)
+            f.writelines(output) 
